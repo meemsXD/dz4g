@@ -1,0 +1,14 @@
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/obj/Debug/net8.0/dz1.GeneratedMSBuildEditorConfig.editorconfig
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/obj/Debug/net8.0/dz1.AssemblyInfoInputs.cache
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/obj/Debug/net8.0/dz1.AssemblyInfo.cs
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/obj/Debug/net8.0/dz1.csproj.CoreCompileInputs.cache
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/bin/Debug/net8.0/dz1
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/bin/Debug/net8.0/dz1.deps.json
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/bin/Debug/net8.0/dz1.runtimeconfig.json
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/bin/Debug/net8.0/dz1.dll
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/bin/Debug/net8.0/dz1.pdb
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/obj/Debug/net8.0/dz1.dll
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/obj/Debug/net8.0/refint/dz1.dll
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/obj/Debug/net8.0/dz1.pdb
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/obj/Debug/net8.0/dz1.genruntimeconfig.cache
+/mnt/c/Users/vsmyk/OneDrive/Рабочий стол/2sem/g/dz1/obj/Debug/net8.0/ref/dz1.dll
