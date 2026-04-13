@@ -1,0 +1,146 @@
+using System;
+using System.Globalization;
+
+class HelloWorld
+{
+    static void Main()
+    {
+        // --- Этап 1: Ввод данных ---
+        Console.Write("Введите количество участников: ");
+        int n = int.Parse(Console.ReadLine() ?? "0");
+
+        string[] teams = new string[n];
+        double[] avgSpeeds = new double[n];
+
+        for (int i = 0; i < n; i++)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Участник #" + (i + 1));
+            Console.Write("Команда: ");
+            teams[i] = (Console.ReadLine() ?? "").Trim();
+
+            Console.Write("Средняя скорость (км/ч): ");
+            avgSpeeds[i] = ReadDoubleInvariant();
+        }
+
+        // --- Этап 2: Статистический анализ ---
+        double sum = 0;
+        int maxIndex = 0;
+        int minIndex = 0;
+
+        for (int i = 0; i < n; i++)
+        {
+            sum += avgSpeeds[i];
+
+            if (avgSpeeds[i] > avgSpeeds[maxIndex])
+                maxIndex = i;
+
+            if (avgSpeeds[i] < avgSpeeds[minIndex])
+                minIndex = i;
+        }
+
+        double avg = sum / n;
+        double delta = avgSpeeds[maxIndex] - avgSpeeds[minIndex];
+
+        Console.WriteLine();
+        Console.WriteLine("--- СТАТИСТИКА КВАЛИФИКАЦИИ ---");
+        Console.WriteLine("Средняя скорость: " + avg.ToString("F2", CultureInfo.InvariantCulture) + " км/ч");
+        Console.WriteLine("Лидер: " + teams[maxIndex] + " (" + avgSpeeds[maxIndex].ToString("F2", CultureInfo.InvariantCulture) + " км/ч)");
+        Console.WriteLine("Самый медленный: " + teams[minIndex] + " (" + avgSpeeds[minIndex].ToString("F2", CultureInfo.InvariantCulture) + " км/ч)");
+        Console.WriteLine("Разница темпа: " + delta.ToString("F2", CultureInfo.InvariantCulture) + " км/ч");
+
+        // --- Этап 3: Таблица (как введено) ---
+        Console.WriteLine();
+        PrintTableHeader();
+        for (int i = 0; i < n; i++)
+        {
+            Console.WriteLine("| " + string.Format(CultureInfo.InvariantCulture, "{0,-20}", teams[i]) +
+                              " | " + string.Format(CultureInfo.InvariantCulture, "{0,20:F2}", avgSpeeds[i]) + " |");
+        }
+        PrintTableFooter();
+
+        // --- Этап 4: Сортировка (Selection Sort) по убыванию ---
+        for (int i = 0; i < n - 1; i++)
+        {
+            int best = i;
+            for (int j = i + 1; j < n; j++)
+            {
+                if (avgSpeeds[j] > avgSpeeds[best])
+                    best = j;
+            }
+
+            if (best != i)
+            {
+                // синхронная перестановка
+                double tmpSpeed = avgSpeeds[i];
+                avgSpeeds[i] = avgSpeeds[best];
+                avgSpeeds[best] = tmpSpeed;
+
+                string tmpTeam = teams[i];
+                teams[i] = teams[best];
+                teams[best] = tmpTeam;
+            }
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("--- ИТОГОВЫЙ ПРОТОКОЛ КВАЛИФИКАЦИИ ---");
+        Console.WriteLine("-----------------------------------------------");
+        Console.WriteLine("| Поз. | Команда              | Скорость      |");
+        Console.WriteLine("-----------------------------------------------");
+        for (int i = 0; i < n; i++)
+        {
+            // примерный формат как в методичке семинара
+            Console.WriteLine("| " + string.Format(CultureInfo.InvariantCulture, "{0,3}", i + 1) + "  | " +
+                              string.Format(CultureInfo.InvariantCulture, "{0,-20}", teams[i]) + " | " +
+                              string.Format(CultureInfo.InvariantCulture, "{0,10:F2}", avgSpeeds[i]) + "   |");
+        }
+        Console.WriteLine("-----------------------------------------------");
+
+        // --- Этап 5: Фильтр по минимальной скорости ---
+        Console.WriteLine();
+        Console.Write("Введите минимальную скорость для отбора (км/ч): ");
+        double threshold = ReadDoubleInvariant();
+
+        int count = 0;
+        Console.WriteLine();
+        Console.WriteLine("Команды со скоростью >= " + threshold.ToString("F2", CultureInfo.InvariantCulture) + " км/ч:");
+        for (int i = 0; i < n; i++)
+        {
+            if (avgSpeeds[i] >= threshold)
+            {
+                Console.WriteLine("- " + teams[i] + " (" + avgSpeeds[i].ToString("F2", CultureInfo.InvariantCulture) + " км/ч)");
+                count++;
+            }
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Отобрано команд: " + count);
+    }
+
+    // Читает double так, чтобы принимались и "228.5", и "228,5"
+    static double ReadDoubleInvariant()
+    {
+        while (true)
+        {
+            string s = (Console.ReadLine() ?? "").Trim().Replace(',', '.');
+
+            double value;
+            if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out value))
+                return value;
+
+            Console.Write("Ошибка ввода. Введите число ещё раз: ");
+        }
+    }
+
+    static void PrintTableHeader()
+    {
+        Console.WriteLine("-----------------------------------------------");
+        Console.WriteLine("| Команда              | Скорость (км/ч)     |");
+        Console.WriteLine("-----------------------------------------------");
+    }
+
+    static void PrintTableFooter()
+    {
+        Console.WriteLine("-----------------------------------------------");
+    }
+}

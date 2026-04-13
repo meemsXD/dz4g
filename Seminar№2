@@ -1,0 +1,341 @@
+int[,] matrixCOO =
+{
+    { 0, 0, 9, 0, 0, 0 },
+    { 0, 2, 0, 0, 0, 0 },
+    { 0, 0, 0, 1, 0, 0 },
+    { 0, 0, 0, 0, 5, 0 },
+    { 0, 0, 0, 6, 0, 0 }
+};
+
+int[,] matrixLIL =
+{
+    { 8, 0, 1, 0, -1 },
+    { 0, 8, 2, 0, 0  },
+    { 0, 0, 3, 0, 0  },
+    { -2, 0, 4, 8, -2 },
+    { 0, 0, 5, 0, 8  },
+    { 0, 0, 6, 0, 0  }
+};
+
+int[,] matrixCSR =
+{
+    { 8, 0, 2, 0, 0 },
+    { 0, 0, 5, 0, 0 },
+    { 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0 },
+    { 0, 0, 7, 1, 2 },
+    { 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 9, 0 }
+};
+
+PrintSeparator("ЗАДАНИЕ 1: COO");
+
+Console.WriteLine("Исходная матрица COO:");
+PrintMatrix(matrixCOO);
+
+Console.WriteLine($"\nCOO эффективно: {isCOOEffective(matrixCOO)}");
+
+DenseToCOO(matrixCOO, out int[] rowCOO, out int[] colCOO, out int[] dataCOO);
+
+Console.WriteLine("\nDense -> COO:");
+PrintArray("Row", rowCOO);
+PrintArray("Column", colCOO);
+PrintArray("Data", dataCOO);
+
+int[,] restoredCOO = COOToDense(rowCOO, colCOO, dataCOO,
+    matrixCOO.GetLength(0), matrixCOO.GetLength(1));
+
+Console.WriteLine("\nCOO -> Dense:");
+PrintMatrix(restoredCOO);
+Console.WriteLine($"Матрицы равны: {MatricesEqual(matrixCOO, restoredCOO)}");
+
+PrintSeparator("ЗАДАНИЕ 2: LIL");
+
+Console.WriteLine("Исходная матрица LIL:");
+PrintMatrix(matrixLIL);
+
+Console.WriteLine($"\nLIL эффективно: {isLILEffective(matrixLIL)}");
+
+DenseToLIL(matrixLIL, out int[][] rowsLIL, out int[][] dataLIL);
+
+Console.WriteLine("\nDense -> LIL:");
+PrintJaggedArray("Rows", rowsLIL);
+PrintJaggedArray("Data", dataLIL);
+
+int[,] restoredLIL = LILToDense(rowsLIL, dataLIL,
+    matrixLIL.GetLength(0), matrixLIL.GetLength(1));
+
+Console.WriteLine("\nLIL -> Dense:");
+PrintMatrix(restoredLIL);
+Console.WriteLine($"Матрицы равны: {MatricesEqual(matrixLIL, restoredLIL)}");
+
+PrintSeparator("ЗАДАНИЕ 3: CSR");
+
+Console.WriteLine("Исходная матрица CSR:");
+PrintMatrix(matrixCSR);
+
+Console.WriteLine($"\nCSR эффективно: {isCSREffective(matrixCSR)}");
+
+DenseToCSR(matrixCSR, out int[] dataCSR, out int[] indicesCSR, out int[] ipCSR);
+
+Console.WriteLine("\nDense -> CSR:");
+PrintArray("Data", dataCSR);
+PrintArray("Indices", indicesCSR);
+PrintArray("IndexPointers", ipCSR);
+
+int[,] restoredCSR = CSRToDense(dataCSR, indicesCSR, ipCSR,
+    matrixCSR.GetLength(0), matrixCSR.GetLength(1));
+
+Console.WriteLine("\nCSR -> Dense:");
+PrintMatrix(restoredCSR);
+Console.WriteLine($"Матрицы равны: {MatricesEqual(matrixCSR, restoredCSR)}");
+
+Console.WriteLine("\n=== ПРОГРАММА ЗАВЕРШЕНА ===");
+
+static void PrintSeparator(string title)
+{
+    Console.WriteLine("\n" + new string('=', 60));
+    Console.WriteLine(title);
+    Console.WriteLine(new string('=', 60));
+}
+
+static void PrintMatrix(int[,] matrix)
+{
+    int rows = matrix.GetLength(0);
+    int cols = matrix.GetLength(1);
+
+    for (int i = 0; i < rows; i++)
+    {
+        Console.Write("| ");
+        for (int j = 0; j < cols; j++)
+        {
+            Console.Write($"{matrix[i, j],4}");
+        }
+        Console.WriteLine(" |");
+    }
+}
+
+static void PrintArray(string name, int[] arr)
+{
+    Console.Write($"{name}: [ ");
+    for (int i = 0; i < arr.Length; i++)
+    {
+        Console.Write(arr[i]);
+        if (i < arr.Length - 1)
+            Console.Write(", ");
+    }
+    Console.WriteLine(" ]");
+}
+
+static void PrintJaggedArray(string name, int[][] arr)
+{
+    Console.WriteLine($"{name}:");
+    for (int i = 0; i < arr.Length; i++)
+    {
+        Console.Write($"  [{i}] = [ ");
+        for (int j = 0; j < arr[i].Length; j++)
+        {
+            Console.Write(arr[i][j]);
+            if (j < arr[i].Length - 1)
+                Console.Write(", ");
+        }
+        Console.WriteLine(" ]");
+    }
+}
+
+static int CountNonZero(int[,] matrix)
+{
+    int count = 0;
+
+    for (int i = 0; i < matrix.GetLength(0); i++)
+    {
+        for (int j = 0; j < matrix.GetLength(1); j++)
+        {
+            if (matrix[i, j] != 0)
+                count++;
+        }
+    }
+
+    return count;
+}
+
+static bool MatricesEqual(int[,] a, int[,] b)
+{
+    if (a.GetLength(0) != b.GetLength(0) || a.GetLength(1) != b.GetLength(1))
+        return false;
+
+    for (int i = 0; i < a.GetLength(0); i++)
+    {
+        for (int j = 0; j < a.GetLength(1); j++)
+        {
+            if (a[i, j] != b[i, j])
+                return false;
+        }
+    }
+
+    return true;
+}
+
+static void DenseToCOO(int[,] dense, out int[] row, out int[] col, out int[] data)
+{
+    int rows = dense.GetLength(0);
+    int cols = dense.GetLength(1);
+    int nonZeroCount = CountNonZero(dense);
+
+    row = new int[nonZeroCount];
+    col = new int[nonZeroCount];
+    data = new int[nonZeroCount];
+
+    int index = 0;
+
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            if (dense[i, j] != 0)
+            {
+                row[index] = i;
+                col[index] = j;
+                data[index] = dense[i, j];
+                index++;
+            }
+        }
+    }
+}
+
+static int[,] COOToDense(int[] row, int[] col, int[] data, int numRows, int numCols)
+{
+    int[,] dense = new int[numRows, numCols];
+
+    for (int k = 0; k < data.Length; k++)
+    {
+        dense[row[k], col[k]] = data[k];
+    }
+
+    return dense;
+}
+
+static bool isCOOEffective(int[,] dense)
+{
+    int rows = dense.GetLength(0);
+    int cols = dense.GetLength(1);
+    int n = CountNonZero(dense);
+
+    return 3 * n < rows * cols;
+}
+
+static void DenseToLIL(int[,] dense, out int[][] rows, out int[][] data)
+{
+    int numRows = dense.GetLength(0);
+    int numCols = dense.GetLength(1);
+
+    rows = new int[numRows][];
+    data = new int[numRows][];
+
+    for (int i = 0; i < numRows; i++)
+    {
+        int count = 0;
+
+        for (int j = 0; j < numCols; j++)
+        {
+            if (dense[i, j] != 0)
+                count++;
+        }
+
+        rows[i] = new int[count];
+        data[i] = new int[count];
+
+        int index = 0;
+
+        for (int j = 0; j < numCols; j++)
+        {
+            if (dense[i, j] != 0)
+            {
+                rows[i][index] = j;
+                data[i][index] = dense[i, j];
+                index++;
+            }
+        }
+    }
+}
+
+static int[,] LILToDense(int[][] rows, int[][] data, int numRows, int numCols)
+{
+    int[,] dense = new int[numRows, numCols];
+
+    for (int i = 0; i < numRows; i++)
+    {
+        for (int k = 0; k < rows[i].Length; k++)
+        {
+            dense[i, rows[i][k]] = data[i][k];
+        }
+    }
+
+    return dense;
+}
+
+static bool isLILEffective(int[,] dense)
+{
+    int rows = dense.GetLength(0);
+    int cols = dense.GetLength(1);
+    int n = CountNonZero(dense);
+
+    return 2 * n < rows * cols;
+}
+
+static void DenseToCSR(int[,] dense, out int[] data, out int[] indices, out int[] indexPointers)
+{
+    int numRows = dense.GetLength(0);
+    int numCols = dense.GetLength(1);
+    int n = CountNonZero(dense);
+
+    data = new int[n];
+    indices = new int[n];
+    indexPointers = new int[numRows + 1];
+
+    int index = 0;
+
+    for (int i = 0; i < numRows; i++)
+    {
+        indexPointers[i] = index;
+
+        for (int j = 0; j < numCols; j++)
+        {
+            if (dense[i, j] != 0)
+            {
+                data[index] = dense[i, j];
+                indices[index] = j;
+                index++;
+            }
+        }
+    }
+
+    indexPointers[numRows] = index;
+}
+
+static int[,] CSRToDense(int[] data, int[] indices, int[] indexPointers, int numRows, int numCols)
+{
+    int[,] dense = new int[numRows, numCols];
+
+    for (int i = 0; i < numRows; i++)
+    {
+        int start = indexPointers[i];
+        int end = indexPointers[i + 1];
+
+        for (int k = start; k < end; k++)
+        {
+            dense[i, indices[k]] = data[k];
+        }
+    }
+
+    return dense;
+}
+
+static bool isCSREffective(int[,] dense)
+{
+    int rows = dense.GetLength(0);
+    int cols = dense.GetLength(1);
+    int n = CountNonZero(dense);
+
+    return 2 * n + rows + 1 < rows * cols;
+}
