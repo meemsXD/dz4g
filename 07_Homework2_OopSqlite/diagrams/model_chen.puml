@@ -1,0 +1,20 @@
+@startchen
+title Вариант 24. Операторы связи и тарифы
+
+entity "Операторы связи" as Operators {
+  operator_id : int <<PK>>
+  operator_name : string
+}
+
+entity "Тарифы" as Tariffs {
+  tariff_id : int <<PK>>
+  operator_id : int <<FK>>
+  tariff_name : string
+  price_month : int [>= 0]
+}
+
+relationship "предлагает" as Offers
+
+Operators -1- Offers
+Offers -N- Tariffs
+@endchen

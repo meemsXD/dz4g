@@ -1,0 +1,29 @@
+@startuml
+title Схема работы ReportBuilder
+
+start
+:Создан ReportBuilder;
+:Query(sql);
+note right
+_sql = "SELECT ..."
+end note
+:Title(text);
+note right
+_title = "Средняя абонентская плата"
+end note
+:Header(columns);
+note right
+_headers = ["Оператор", "Средняя цена"]
+end note
+:ColumnWidths(widths);
+note right
+_widths = [24, 14]
+end note
+:Footer(label);
+:Print();
+:Build();
+:DatabaseManager.ExecuteQuery(_sql);
+:Форматирование результата через StringBuilder;
+:Вывод отчета в консоль;
+stop
+@enduml
